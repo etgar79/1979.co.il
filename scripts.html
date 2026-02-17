@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>סקריפטים - אתגר אהרוני</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rubik', 'Segoe UI', sans-serif;
+      background: #fafbfd;
+      color: #2d3748;
+      direction: rtl;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 40px 40px 36px;
+      text-align: center;
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #2c5282 100%);
+      color: #fff;
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(to right, #e53e3e, #dd6b20, #d69e2e);
+    }
+
+    header h1 {
+      font-size: 2.2em;
+      margin: 0;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      font-size: 1.1em;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 8px;
+      font-weight: 400;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 20px;
+      background: #ffffff;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav a {
+      color: #2b6cb0;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+
+    nav a:hover, nav a.active {
+      color: #1a365d;
+      background-color: #ebf4ff;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .search-box {
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .search-box input {
+      width: 100%;
+      max-width: 500px;
+      padding: 14px 24px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1.05em;
+      font-family: 'Rubik', sans-serif;
+      direction: rtl;
+      transition: border-color 0.2s;
+      background: #ffffff;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #2b6cb0;
+      box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+    }
+
+    .script-card {
+      background: #ffffff;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transition: all 0.25s;
+    }
+
+    .script-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-color: #cbd5e0;
+    }
+
+    .script-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: #f7fafc;
+      border-bottom: 1px solid #e2e8f0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .script-header:hover {
+      background: #edf2f7;
+    }
+
+    .script-title-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .script-title-area h3 {
+      color: #1a365d;
+      font-size: 1.15em;
+      font-weight: 600;
+    }
+
+    .script-tag {
+      display: inline-block;
+      background: #ebf4ff;
+      color: #2b6cb0;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      font-weight: 500;
+    }
+
+    .script-toggle {
+      font-size: 1.2em;
+      color: #718096;
+      transition: transform 0.3s;
+    }
+
+    .script-toggle.open {
+      transform: rotate(180deg);
+    }
+
+    .script-body {
+      display: none;
+      padding: 0;
+    }
+
+    .script-body.open {
+      display: block;
+    }
+
+    .script-desc {
+      padding: 16px 24px;
+      color: #4a5568;
+      font-size: 0.95em;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .code-container {
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: #2b6cb0;
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Rubik', sans-serif;
+      font-size: 0.85em;
+      font-weight: 500;
+      transition: all 0.2s;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-btn:hover {
+      background: #1a365d;
+    }
+
+    .copy-btn.copied {
+      background: #38a169;
+    }
+
+    pre {
+      margin: 0;
+      padding: 20px 24px;
+      background: #1a202c;
+      color: #e2e8f0;
+      overflow-x: auto;
+      font-size: 0.9em;
+      line-height: 1.7;
+      direction: ltr;
+      text-align: left;
+    }
+
+    pre code {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      white-space: pre;
+    }
+
+    /* PowerShell syntax highlighting */
+    .ps-comment { color: #6a9955; }
+    .ps-cmdlet { color: #dcdcaa; }
+    .ps-string { color: #ce9178; }
+    .ps-variable { color: #9cdcfe; }
+    .ps-param { color: #569cd6; }
+    .ps-keyword { color: #c586c0; }
+    .ps-operator { color: #d4d4d4; }
+    .ps-number { color: #b5cea8; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #a0aec0;
+    }
+
+    .empty-state p {
+      font-size: 1.1em;
+      margin-top: 12px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 28px;
+      background: #1a365d;
+      font-size: 0.9em;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 28px 20px 24px;
+      }
+
+      header h1 {
+        font-size: 1.7em;
+      }
+
+      .container {
+        padding: 24px 12px;
+      }
+
+      .script-header {
+        padding: 16px 18px;
+      }
+
+      .script-title-area h3 {
+        font-size: 1em;
+      }
+
+      pre {
+        font-size: 0.8em;
+        padding: 16px;
+      }
+
+      .copy-btn {
+        padding: 6px 12px;
+        font-size: 0.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ארגז הכלים</h1>
+    <p>סקריפטים של PowerShell לעבודה יומיומית</p>
+  </header>
+
+  <nav>
+    <a href="index.html">דף הבית</a>
+    <a href="scripts.html" class="active">סקריפטים</a>
+  </nav>
+
+  <div class="container">
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="חפש סקריפט..." oninput="filterScripts()">
+    </div>
+
+    <div id="scriptsContainer">
+
+      <!-- סקריפט לדוגמה 1 -->
+      <div class="script-card" data-tags="מערכת מידע">
+        <div class="script-header" onclick="toggleScript(this)">
+          <div class="script-title-area">
+            <h3>בדיקת מידע מחשב</h3>
+            <span class="script-tag">מערכת</span>
+          </div>
+          <span class="script-toggle">▼</span>
+        </div>
+        <div class="script-body">
+          <div class="script-desc">מציג מידע מפורט על המחשב - שם, מערכת הפעלה, מעבד, זיכרון ודיסקים.</div>
+          <div class="code-container">
+            <button class="copy-btn" onclick="copyScript(this)">
+              <span>העתק</span>
+            </button>
+            <pre><code><span class="ps-comment"># בדיקת מידע מחשב</span>
+<span class="ps-variable">$computerInfo</span> <span class="ps-operator">=</span> <span class="ps-cmdlet">Get-ComputerInfo</span>
+<span class="ps-cmdlet">Write-Host</span> <span class="ps-string">"Computer Name: $($computerInfo.CsName)"</span> <span class="ps-param">-ForegroundColor</span> Cyan
+<span class="ps-cmdlet">Write-Host</span> <span class="ps-string">"OS: $($computerInfo.OsName)"</span>
+<span class="ps-cmdlet">Write-Host</span> <span class="ps-string">"RAM: $([math]::Round($computerInfo.CsTotalPhysicalMemory / 1GB, 2)) GB"</span>
+
+<span class="ps-comment"># דיסקים</span>
+<span class="ps-cmdlet">Get-Disk</span> <span class="ps-operator">|</span> <span class="ps-cmdlet">Format-Table</span> Number, FriendlyName, <span class="ps-operator">@{</span>N<span class="ps-operator">=</span><span class="ps-string">'Size(GB)'</span><span class="ps-operator">;</span>E<span class="ps-operator">={</span>[math]::Round($_.Size / 1GB, 2)<span class="ps-operator">}}</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- סקריפט לדוגמה 2 -->
+      <div class="script-card" data-tags="רשת">
+        <div class="script-header" onclick="toggleScript(this)">
+          <div class="script-title-area">
+            <h3>בדיקת חיבורי רשת</h3>
+            <span class="script-tag">רשת</span>
+          </div>
+          <span class="script-toggle">▼</span>
+        </div>
+        <div class="script-body">
+          <div class="script-desc">בודק חיבורים פעילים, כתובות IP ומבצע בדיקת DNS.</div>
+          <div class="code-container">
+            <button class="copy-btn" onclick="copyScript(this)">
+              <span>העתק</span>
+            </button>
+            <pre><code><span class="ps-comment"># בדיקת חיבורי רשת</span>
+<span class="ps-cmdlet">Get-NetIPAddress</span> <span class="ps-param">-AddressFamily</span> IPv4 <span class="ps-operator">|</span>
+  <span class="ps-cmdlet">Where-Object</span> <span class="ps-operator">{</span> <span class="ps-variable">$_</span>.IPAddress <span class="ps-operator">-ne</span> <span class="ps-string">"127.0.0.1"</span> <span class="ps-operator">}</span> <span class="ps-operator">|</span>
+  <span class="ps-cmdlet">Format-Table</span> InterfaceAlias, IPAddress, PrefixLength
+
+<span class="ps-comment"># בדיקת DNS</span>
+<span class="ps-cmdlet">Resolve-DnsName</span> <span class="ps-string">"google.com"</span> <span class="ps-operator">|</span> <span class="ps-cmdlet">Format-Table</span> Name, Type, IPAddress
+
+<span class="ps-comment"># Ping מהיר</span>
+<span class="ps-cmdlet">Test-Connection</span> <span class="ps-param">-ComputerName</span> <span class="ps-string">"8.8.8.8"</span> <span class="ps-param">-Count</span> <span class="ps-number">4</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- סקריפט לדוגמה 3 -->
+      <div class="script-card" data-tags="אופיס 365">
+        <div class="script-header" onclick="toggleScript(this)">
+          <div class="script-title-area">
+            <h3>חיבור ל-Microsoft 365</h3>
+            <span class="script-tag">אופיס 365</span>
+          </div>
+          <span class="script-toggle">▼</span>
+        </div>
+        <div class="script-body">
+          <div class="script-desc">מתחבר לשירותי Microsoft 365 (Exchange Online, Azure AD) ומציג מידע בסיסי.</div>
+          <div class="code-container">
+            <button class="copy-btn" onclick="copyScript(this)">
+              <span>העתק</span>
+            </button>
+            <pre><code><span class="ps-comment"># התקנת מודולים (פעם ראשונה בלבד)</span>
+<span class="ps-cmdlet">Install-Module</span> <span class="ps-param">-Name</span> ExchangeOnlineManagement <span class="ps-param">-Force</span>
+<span class="ps-cmdlet">Install-Module</span> <span class="ps-param">-Name</span> AzureAD <span class="ps-param">-Force</span>
+
+<span class="ps-comment"># התחברות</span>
+<span class="ps-cmdlet">Connect-ExchangeOnline</span>
+<span class="ps-cmdlet">Connect-AzureAD</span>
+
+<span class="ps-comment"># רשימת משתמשים</span>
+<span class="ps-cmdlet">Get-AzureADUser</span> <span class="ps-param">-All</span> <span class="ps-variable">$true</span> <span class="ps-operator">|</span>
+  <span class="ps-cmdlet">Select-Object</span> DisplayName, UserPrincipalName, AccountEnabled <span class="ps-operator">|</span>
+  <span class="ps-cmdlet">Format-Table</span> <span class="ps-param">-AutoSize</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <p>לא נמצאו סקריפטים התואמים לחיפוש</p>
+    </div>
+
+  </div>
+
+  <footer>
+    &copy; 2025 אתגר אהרוני - טק תרפי מחשבים | כל הזכויות שמורות
+  </footer>
+
+  <script>
+    function toggleScript(header) {
+      const body = header.nextElementSibling;
+      const toggle = header.querySelector('.script-toggle');
+      body.classList.toggle('open');
+      toggle.classList.toggle('open');
+    }
+
+    function copyScript(btn) {
+      const code = btn.closest('.code-container').querySelector('code');
+      const text = code.innerText;
+
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.querySelector('span').textContent = 'הועתק!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.querySelector('span').textContent = 'העתק';
+        }, 2000);
+      });
+    }
+
+    function filterScripts() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.script-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const desc = card.querySelector('.script-desc')?.textContent.toLowerCase() || '';
+        const tags = (card.dataset.tags || '').toLowerCase();
+        const code = card.querySelector('code')?.textContent.toLowerCase() || '';
+
+        if (title.includes(query) || desc.includes(query) || tags.includes(query) || code.includes(query)) {
+          card.style.display = '';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('emptyState').style.display = visibleCount === 0 ? '' : 'none';
+    }
+  </script>
+
+</body>
+</html>
