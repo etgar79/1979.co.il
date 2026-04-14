@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>סוכן IT - טק תרפי מחשבים</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(to right,#0f2027,#203a43,#2c5364);color:#fff;direction:rtl;min-height:100vh;display:flex;flex-direction:column}
+header{padding:20px 40px;text-align:center;background:rgba(0,0,0,.5);position:relative}
+header h1{font-size:2em;color:#00ffff;text-shadow:0 0 20px rgba(0,255,255,.5)}
+header p{color:#ccc;margin-top:5px}
+.badge{display:inline-block;background:rgba(0,255,255,.1);padding:6px 20px;border-radius:25px;margin-top:8px;border:1px solid #00ffff;color:#00ffff;font-weight:bold;font-size:.85em}
+.back{position:absolute;left:20px;top:22px;background:rgba(0,255,255,.1);border:1px solid rgba(0,255,255,.3);color:#00ffff;padding:7px 14px;border-radius:8px;text-decoration:none;font-size:.85em;transition:.3s}
+.back:hover{background:rgba(0,255,255,.25)}
+.screen{display:none;flex:1;justify-content:center;align-items:center;padding:30px 20px}
+.screen.on{display:flex}
+/* LOGIN */
+.login-box{background:rgba(255,255,255,.05);border:1px solid rgba(0,255,255,.3);border-radius:20px;padding:45px 35px;text-align:center;max-width:480px;width:100%;box-shadow:0 0 30px rgba(0,255,255,.15)}
+.login-box .icon{font-size:4em;margin-bottom:15px}
+.login-box h2{color:#00ffff;font-size:1.6em;margin-bottom:8px}
+.login-box p{color:#aaa;margin-bottom:35px}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.choice-btn{padding:28px 15px;background:rgba(0,255,255,.07);border:2px solid rgba(0,255,255,.3);border-radius:14px;color:#fff;cursor:pointer;font-family:'Segoe UI',sans-serif;transition:.3s;overflow:hidden}
+.choice-btn:hover{border-color:#00ffff;background:rgba(0,255,255,.15);transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,255,255,.25)}
+.choice-btn .ci{font-size:2.2em;display:block;margin-bottom:8px}
+.choice-btn .ct{color:#00ffff;font-weight:600;font-size:1em;display:block}
+.choice-btn .cd{color:#aaa;font-size:.8em;margin-top:4px;display:block}
+/* PASSWORD */
+.pass-box{background:rgba(255,255,255,.05);border:1px solid rgba(0,255,255,.3);border-radius:20px;padding:45px 35px;text-align:center;max-width:380px;width:100%;box-shadow:0 0 30px rgba(0,255,255,.15)}
+.pass-box h2{color:#00ffff;font-size:1.5em;margin-bottom:8px}
+.pass-box p{color:#aaa;margin-bottom:25px}
+input[type=password]{width:100%;padding:14px;background:rgba(0,0,0,.4);border:1px solid rgba(0,255,255,.3);border-radius:10px;color:#fff;font-size:1.2em;text-align:center;letter-spacing:6px;direction:ltr;margin-bottom:12px}
+input[type=password]:focus{outline:none;border-color:#00ffff;box-shadow:0 0 12px rgba(0,255,255,.2)}
+.err{color:#ff6b6b;font-size:.85em;margin-bottom:10px;display:none}
+/* CHAT SCREEN */
+#chatScreen{display:none;flex-direction:column;flex:1;padding:0}
+#chatScreen.on{display:flex}
+.tabs{display:none;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(0,255,255,.2)}
+.tab{padding:11px 22px;background:transparent;border:none;border-bottom:3px solid transparent;color:#aaa;cursor:pointer;font-family:'Segoe UI',sans-serif;font-size:.9em;transition:.3s}
+.tab:hover{color:#00ffff}
+.tab.on{color:#00ffff;border-bottom-color:#00ffff;background:rgba(0,255,255,.05)}
+.tab-pane{display:none;flex:1;flex-direction:column;overflow:hidden}
+.tab-pane.on{display:flex}
+/* CHAT */
+.chat-area{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:rgba(0,255,255,.3) transparent}
+.msg{max-width:78%;padding:13px 17px;border-radius:14px;line-height:1.6;font-size:.93em;word-break:break-word}
+.msg.user{align-self:flex-start;background:rgba(0,255,255,.15);border:1px solid rgba(0,255,255,.3);border-radius:14px 14px 4px 14px}
+.msg.bot{align-self:flex-end;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px 14px 14px 4px}
+.src{font-size:.72em;color:#00ffff;opacity:.7;margin-bottom:6px}
+.code-block{margin-top:12px;background:rgba(0,0,0,.5);border:1px solid rgba(0,255,255,.25);border-radius:10px;overflow:hidden}
+.code-top{display:flex;justify-content:space-between;align-items:center;padding:8px 13px;background:rgba(0,255,255,.08);border-bottom:1px solid rgba(0,255,255,.2)}
+.code-top span{color:#00ffff;font-size:.8em;font-weight:600}
+.copy-btn{background:rgba(0,255,255,.15);border:1px solid #00ffff;color:#00ffff;padding:4px 11px;border-radius:5px;cursor:pointer;font-size:.75em;transition:.3s;font-family:'Segoe UI',sans-serif}
+.copy-btn:hover{background:rgba(0,255,255,.35)}
+.copy-btn.ok{background:rgba(0,200,80,.2);border-color:#00c850;color:#00c850}
+.code-body{padding:13px;font-family:'Courier New',monospace;font-size:.82em;color:#ddd;white-space:pre-wrap;direction:ltr;text-align:left}
+.typing{align-self:flex-end;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 18px;display:none}
+.dots span{width:7px;height:7px;background:#00ffff;border-radius:50%;display:inline-block;margin:0 2px;animation:bounce 1.3s infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-7px);opacity:1}}
+.input-area{padding:14px;background:rgba(0,0,0,.25);border-top:1px solid rgba(0,255,255,.15)}
+.input-row{display:flex;gap:10px;max-width:880px;margin:0 auto}
+textarea.ci{flex:1;padding:13px 17px;background:rgba(0,0,0,.4);border:1px solid rgba(0,255,255,.3);border-radius:12px;color:#fff;font-size:.93em;font-family:'Segoe UI',sans-serif;resize:none;min-height:48px;max-height:140px;transition:.3s}
+textarea.ci:focus{outline:none;border-color:#00ffff;box-shadow:0 0 10px rgba(0,255,255,.2)}
+textarea.ci::placeholder{color:#555}
+.send-btn{padding:13px 22px;background:rgba(0,255,255,.18);border:2px solid #00ffff;border-radius:12px;color:#00ffff;font-weight:600;cursor:pointer;font-family:'Segoe UI',sans-serif;transition:.3s;white-space:nowrap}
+.send-btn:hover:not(:disabled){background:rgba(0,255,255,.35);transform:translateY(-2px)}
+.send-btn:disabled{opacity:.4;cursor:not-allowed}
+.email-btn{display:block;width:100%;max-width:880px;margin:8px auto 0;padding:9px;background:transparent;border:1px solid rgba(0,255,255,.15);border-radius:8px;color:#777;font-size:.82em;cursor:pointer;transition:.3s;font-family:'Segoe UI',sans-serif}
+.email-btn:hover{color:#00ffff;border-color:rgba(0,255,255,.4);background:rgba(0,255,255,.05)}
+/* SCRIPTS TAB */
+.mgr{flex:1;overflow-y:auto;padding:20px;max-width:880px;width:100%;margin:0 auto}
+.sec-title{color:#00ffff;font-size:1.2em;margin-bottom:15px;text-shadow:0 0 8px rgba(0,255,255,.3)}
+.form-card{background:rgba(255,255,255,.04);border:1px solid rgba(0,255,255,.2);border-radius:14px;padding:22px;margin-bottom:25px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.frow.full{grid-template-columns:1fr}
+label.fl{color:#00ffff;font-size:.82em;font-weight:600;display:block;margin-bottom:5px}
+input.fi,select.fi,textarea.fi{width:100%;padding:9px 13px;background:rgba(0,0,0,.4);border:1px solid rgba(0,255,255,.25);border-radius:8px;color:#fff;font-family:'Segoe UI',sans-serif;font-size:.88em;transition:.3s}
+textarea.fi{min-height:110px;resize:vertical;font-family:'Courier New',monospace;direction:ltr;text-align:left}
+input.fi:focus,select.fi:focus,textarea.fi:focus{outline:none;border-color:#00ffff}
+select.fi option{background:#1a2a3a}
+input.fi::placeholder,textarea.fi::placeholder{color:#444}
+.pub-check{display:flex;align-items:center;gap:8px;color:#ccc;font-size:.88em;cursor:pointer;margin-top:5px}
+.pub-check input{accent-color:#00ffff;width:15px;height:15px}
+.sub-btn{width:100%;padding:11px;background:rgba(0,255,255,.18);border:2px solid #00ffff;border-radius:10px;color:#00ffff;font-size:.95em;font-weight:600;cursor:pointer;transition:.3s;font-family:'Segoe UI',sans-serif;margin-top:10px}
+.sub-btn:hover{background:rgba(0,255,255,.32);box-shadow:0 0 14px rgba(0,255,255,.25)}
+.slist{display:flex;flex-direction:column;gap:10px}
+.sitem{background:rgba(255,255,255,.04);border:1px solid rgba(0,255,255,.14);border-radius:12px;padding:16px;transition:.3s}
+.sitem:hover{border-color:rgba(0,255,255,.3)}
+.sitem-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.sitem-name{color:#00ffff;font-weight:600}
+.sitem-cat{font-size:.75em;color:#888;background:rgba(255,255,255,.05);padding:3px 9px;border-radius:20px;border:1px solid rgba(255,255,255,.1)}
+.sitem-desc{color:#bbb;font-size:.85em;margin-bottom:10px}
+.sitem-btns{display:flex;gap:8px}
+.tog-btn{padding:5px 12px;border-radius:20px;border:1px solid;cursor:pointer;font-size:.75em;transition:.3s;font-family:'Segoe UI',sans-serif}
+.tog-btn.pub{background:rgba(0,200,80,.12);border-color:rgba(0,200,80,.4);color:#00c850}
+.tog-btn.priv{background:rgba(255,80,80,.1);border-color:rgba(255,80,80,.35);color:#ff6060}
+.tog-btn:hover{transform:scale(1.05)}
+.del-btn{padding:5px 11px;background:transparent;border:1px solid rgba(255,80,80,.25);border-radius:6px;color:rgba(255,80,80,.55);cursor:pointer;font-size:.75em;transition:.3s;font-family:'Segoe UI',sans-serif}
+.del-btn:hover{background:rgba(255,80,80,.1);color:#ff6060;border-color:#ff6060}
+/* HISTORY */
+.hitem{background:rgba(255,255,255,.04);border:1px solid rgba(0,255,255,.12);border-radius:10px;padding:14px;margin-bottom:8px}
+.hdate{color:#00ffff;font-size:.78em;margin-bottom:4px}
+.hprob{color:#ddd;font-size:.88em}
+/* TOAST */
+.toast{position:fixed;bottom:25px;right:25px;background:rgba(0,255,255,.12);border:1px solid #00ffff;color:#00ffff;padding:11px 22px;border-radius:10px;font-size:.88em;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+.toast.err{background:rgba(255,80,80,.12);border-color:#ff6060;color:#ff6060}
+/* BUTTONS */
+.action-btn{padding:9px 18px;background:rgba(0,255,255,.12);border:1px solid rgba(0,255,255,.35);border-radius:9px;color:#00ffff;cursor:pointer;font-size:.88em;transition:.3s;font-family:'Segoe UI',sans-serif}
+.action-btn:hover{background:rgba(0,255,255,.22)}
+footer{text-align:center;padding:12px;background:rgba(0,0,0,.5);font-size:.78em;color:#555;border-top:1px solid rgba(0,255,255,.1)}
+@media(max-width:600px){.btn-grid{grid-template-columns:1fr}.frow{grid-template-columns:1fr}.msg{max-width:95%}}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="back">← חזרה לאתר</a>
+  <h1>🤖 סוכן IT</h1>
+  <p>פתרון תקלות חכם | Tech Therapy Computers</p>
+  <div class="badge">טק תרפי מחשבים</div>
+</header>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="screen on">
+  <div class="login-box">
+    <div class="icon">🤖</div>
+    <h2>ברוכים הבאים לסוכן IT</h2>
+    <p>תאר את הבעיה שלך ואמצא פתרון מיידי</p>
+    <div class="btn-grid">
+      <button class="choice-btn" onclick="startClient()">
+        <span class="ci">🙋</span>
+        <span class="ct">אני לקוח</span>
+        <span class="cd">קבל עזרה מהירה</span>
+      </button>
+      <button class="choice-btn" onclick="goPass()">
+        <span class="ci">🔧</span>
+        <span class="ct">אני טכנאי</span>
+        <span class="cd">גישה מלאה לסקריפטים</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD -->
+<div id="passScreen" class="screen">
+  <div class="pass-box">
+    <div style="font-size:3em;margin-bottom:12px">🔐</div>
+    <h2>כניסת טכנאי</h2>
+    <p>הכנס סיסמה להמשך</p>
+    <input type="password" id="passInput" placeholder="••••••••" onkeypress="if(event.key==='Enter')checkPass()">
+    <div class="err" id="passErr">❌ סיסמה שגויה</div>
+    <button class="sub-btn" onclick="checkPass()">🔓 כניסה</button>
+    <br><button class="action-btn" style="margin-top:12px;width:100%;background:transparent;border-color:rgba(255,255,255,.1);color:#777" onclick="show('loginScreen')">← חזרה</button>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div id="chatScreen">
+  <div class="tabs" id="tabs">
+    <button class="tab on" onclick="switchTab('chatPane',this)">💬 צ׳אט</button>
+    <button class="tab" onclick="switchTab('scriptsPane',this);loadScripts()">📁 סקריפטים</button>
+    <button class="tab" onclick="switchTab('histPane',this);loadHist()">📋 היסטוריה</button>
+  </div>
+
+  <!-- CHAT PANE -->
+  <div id="chatPane" class="tab-pane on" style="flex-direction:column">
+    <div class="chat-area" id="chatArea"></div>
+    <div class="typing" id="typing"><div class="dots"><span></span><span></span><span></span></div></div>
+    <div class="input-area">
+      <div class="input-row">
+        <textarea class="ci" id="msgInput" placeholder="תאר את הבעיה שלך..." rows="1"
+          onkeypress="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="send()">שלח ⬅</button>
+      </div>
+      <button class="email-btn" onclick="sendEmail()">📧 שלח סיכום שיחה במייל לטכנאי</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS PANE -->
+  <div id="scriptsPane" class="tab-pane" style="flex-direction:column">
+    <div class="mgr">
+      <h3 class="sec-title">➕ הוסף סקריפט חדש</h3>
+      <div class="form-card">
+        <div class="frow">
+          <div><label class="fl">שם *</label><input class="fi" id="sName" placeholder="תיקון מדפסת"></div>
+          <div><label class="fl">קטגוריה</label>
+            <select class="fi" id="sCat">
+              <option>מדפסות</option><option>רשת</option><option>Windows</option>
+              <option>Active Directory</option><option>Microsoft 365</option>
+              <option>ביצועים</option><option>התקנות</option><option>אבטחה</option><option>אחר</option>
+            </select>
+          </div>
+        </div>
+        <div class="frow full"><div><label class="fl">תיאור *</label><input class="fi" id="sDesc" placeholder="מה הסקריפט עושה?"></div></div>
+        <div class="frow full"><div><label class="fl">תוכן הסקריפט (PowerShell) *</label><textarea class="fi" id="sContent" placeholder="# כתוב כאן...&#10;Stop-Service Spooler"></textarea></div></div>
+        <div class="frow full"><div><label class="fl">מילות מפתח (מופרדות בפסיק)</label><input class="fi" id="sKeys" placeholder="מדפסת, תור, spooler"></div></div>
+        <label class="pub-check"><input type="checkbox" id="sPub"> פרסם ללקוחות</label>
+        <button class="sub-btn" onclick="addScript()">💾 שמור סקריפט</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+        <h3 class="sec-title" style="margin:0">📋 כל הסקריפטים</h3>
+        <button class="action-btn" onclick="loadScripts()">🔄 רענן</button>
+      </div>
+      <div id="sList" class="slist"><div style="text-align:center;color:#aaa;padding:30px">טוען...</div></div>
+    </div>
+  </div>
+
+  <!-- HISTORY PANE -->
+  <div id="histPane" class="tab-pane" style="flex-direction:column">
+    <div class="mgr">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <h3 class="sec-title" style="margin:0">📋 היסטוריית שאילתות</h3>
+        <button class="action-btn" onclick="loadHist()">🔄 רענן</button>
+      </div>
+      <div id="hList"></div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2025 אתגר אהרוני - טק תרפי מחשבים</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────
+const PASS = '06536368';
+const EMAIL_TO = 'sos@1979.co.il';
+// אם יש GAS URL, הכנס כאן. אחרת הבוט עובד לוקאלית:
+const GAS_URL = '';
+
+// ── STATE ────────────────────────────────────────
+let userType = 'client';
+let convo = [];
+let scripts = [];
+let hist = JSON.parse(localStorage.getItem('itbot_hist') || '[]');
+
+// ── SCREENS ──────────────────────────────────────
+function show(id) {
+  ['loginScreen','passScreen'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.remove('on');
+  });
+  const chat = document.getElementById('chatScreen');
+  chat.style.display = 'none';
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('on'); }
+}
+
+function startClient() {
+  userType = 'client';
+  document.getElementById('tabs').style.display = 'none';
+  openChat();
+}
+
+function goPass() {
+  document.getElementById('passInput').value = '';
+  document.getElementById('passErr').style.display = 'none';
+  show('passScreen');
+  setTimeout(() => document.getElementById('passInput').focus(), 200);
+}
+
+function checkPass() {
+  if (document.getElementById('passInput').value === PASS) {
+    userType = 'technician';
+    document.getElementById('tabs').style.display = 'flex';
+    openChat();
+  } else {
+    document.getElementById('passErr').style.display = 'block';
+    document.getElementById('passInput').value = '';
+    setTimeout(() => document.getElementById('passErr').style.display = 'none', 2500);
+  }
+}
+
+function openChat() {
+  ['loginScreen','passScreen'].forEach(s => document.getElementById(s).classList.remove('on'));
+  const chat = document.getElementById('chatScreen');
+  chat.style.display = 'flex';
+  chat.style.flexDirection = 'column';
+  chat.style.flex = '1';
+  convo = [];
+  document.getElementById('chatArea').innerHTML = '';
+  const greet = userType === 'technician'
+    ? 'שלום טכנאי! יש לך גישה מלאה. תאר תקלה ואמצא פתרון, או עבור לניהול סקריפטים.'
+    : 'שלום! אני סוכן ה-IT של טק תרפי. תאר את הבעיה שלך ואמצא פתרון.';
+  botMsg(greet, '', 'סוכן IT');
+}
+
+// ── TABS ─────────────────────────────────────────
+function switchTab(pane, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  document.getElementById(pane).classList.add('on');
+  btn.classList.add('on');
+}
+
+// ── CHAT ─────────────────────────────────────────
+function userMsg(txt) {
+  const d = document.createElement('div');
+  d.className = 'msg user';
+  d.textContent = txt;
+  document.getElementById('chatArea').appendChild(d);
+  scroll();
+  convo.push({role:'user', txt});
+}
+
+function botMsg(txt, script, src) {
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+  let h = src ? `<div class="src">🤖 ${esc(src)}</div>` : '';
+  h += `<div>${esc(txt).replace(/\n/g,'<br>')}</div>`;
+  if (script && script.trim()) {
+    const sid = 'sc'+Date.now();
+    h += `<div class="code-block"><div class="code-top"><span>⚡ PowerShell</span>
+      <button class="copy-btn" onclick="cp('${sid}',this)">📋 העתק</button></div>
+      <div class="code-body" id="${sid}">${esc(script)}</div></div>`;
+  }
+  d.innerHTML = h;
+  document.getElementById('chatArea').appendChild(d);
+  scroll();
+  convo.push({role:'bot', txt, script, src});
+}
+
+function scroll() {
+  const a = document.getElementById('chatArea');
+  a.scrollTop = a.scrollHeight;
+}
+
+async function send() {
+  const inp = document.getElementById('msgInput');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = ''; inp.style.height = 'auto';
+  document.getElementById('sendBtn').disabled = true;
+  userMsg(txt);
+
+  // Show typing
+  const ty = document.getElementById('typing');
+  ty.style.display = 'block';
+  document.getElementById('chatArea').appendChild(ty);
+  scroll();
+
+  const result = await getAnswer(txt);
+  ty.style.display = 'none';
+  botMsg(result.solution, result.script || '', result.source || 'סוכן IT');
+
+  // Save to history
+  hist.unshift({date: new Date().toLocaleString('he-IL'), problem: txt, source: result.source});
+  if (hist.length > 100) hist.pop();
+  localStorage.setItem('itbot_hist', JSON.stringify(hist));
+
+  document.getElementById('sendBtn').disabled = false;
+}
+
+// ── SEARCH ───────────────────────────────────────
+async function getAnswer(problem) {
+  // Try GAS first
+  if (GAS_URL) {
+    try {
+      const r = await fetch(GAS_URL, {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({action:'chat', problem, userType})});
+      const j = await r.json();
+      if (j.success) return j;
+    } catch(e) {}
+  }
+  // Local search
+  return localSearch(problem);
+}
+
+function localSearch(problem) {
+  const q = problem.toLowerCase();
+  // Filter scripts by user type
+  const pool = scripts.filter(s => userType === 'technician' || s.public);
+
+  let best = null, bestScore = 0;
+  for (const s of pool) {
+    let score = 0;
+    const kws = (s.keywords || []).map(k => k.toLowerCase());
+    kws.forEach(k => { if (q.includes(k) || k.includes(q.split(' ')[0])) score += 2; });
+    const words = q.split(/\s+/);
+    words.forEach(w => { if (w.length > 2 && (s.name.toLowerCase().includes(w) || s.description.toLowerCase().includes(w))) score++; });
+    if (score > bestScore) { bestScore = score; best = s; }
+  }
+
+  if (best && bestScore >= 1) {
+    return {
+      success: true,
+      source: 'מאגר פנימי',
+      solution: `פתרון: ${best.name}\n\n${best.description}\n\nהסקריפט הבא יפתור את הבעיה:`,
+      script: best.content
+    };
+  }
+
+  return {
+    success: true,
+    source: 'סוכן IT',
+    solution: 'לא מצאתי פתרון מדויק למה שתיארת. \n\n💡 נסה לנסח אחרת, למשל: "מדפסת לא מדפיסה", "אין אינטרנט", "המחשב איטי".\n\nאו פנה ישירות לטכנאי:\n📞 054-536-8629\n📧 sos@1979.co.il',
+    script: ''
+  };
+}
+
+// ── COPY ─────────────────────────────────────────
+function cp(id, btn) {
+  const txt = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(txt).catch(() => {
+    const t = document.createElement('textarea');
+    t.value = txt; document.body.appendChild(t); t.select();
+    document.execCommand('copy'); document.body.removeChild(t);
+  });
+  btn.textContent = '✅ הועתק!'; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = '📋 העתק'; btn.classList.remove('ok'); }, 2000);
+  toast('הסקריפט הועתק ללוח!');
+}
+
+// ── EMAIL ─────────────────────────────────────────
+function sendEmail() {
+  if (convo.length <= 1) { toast('אין שיחה לשלוח', true); return; }
+  let body = 'סיכום שיחת IT - ' + new Date().toLocaleString('he-IL') + '\n';
+  body += 'סוג משתמש: ' + (userType === 'technician' ? 'טכנאי' : 'לקוח') + '\n\n';
+  convo.forEach(m => {
+    if (m.role === 'user') body += '👤 לקוח: ' + m.txt + '\n';
+    else body += '🤖 סוכן: ' + m.txt + (m.script ? '\n\nסקריפט:\n' + m.script : '') + '\n';
+    body += '\n';
+  });
+  const link = `mailto:${EMAIL_TO}?subject=${encodeURIComponent('סיכום שיחת IT - סוכן')}&body=${encodeURIComponent(body)}`;
+  window.open(link);
+  toast('נפתח חלון מייל...');
+}
+
+// ── SCRIPTS MANAGEMENT ───────────────────────────
+async function loadScripts() {
+  document.getElementById('sList').innerHTML = '<div style="text-align:center;color:#aaa;padding:25px">טוען...</div>';
+  // Try to load from scripts.json
+  try {
+    const r = await fetch('scripts.json?t='+Date.now());
+    scripts = await r.json();
+  } catch(e) {
+    scripts = JSON.parse(localStorage.getItem('itbot_scripts') || '[]');
+  }
+  // Merge with local additions
+  const local = JSON.parse(localStorage.getItem('itbot_extra') || '[]');
+  scripts = [...scripts, ...local];
+  renderScripts();
+}
+
+function renderScripts() {
+  const el = document.getElementById('sList');
+  if (!scripts.length) { el.innerHTML = '<div style="text-align:center;color:#aaa;padding:25px">אין סקריפטים עדיין</div>'; return; }
+  el.innerHTML = scripts.map((s,i) => `
+    <div class="sitem" id="si${s.id}">
+      <div class="sitem-top">
+        <span class="sitem-name">${esc(s.name)}</span>
+        <span class="sitem-cat">${esc(s.category||'כללי')}</span>
+      </div>
+      <div class="sitem-desc">${esc(s.description||'')}</div>
+      <div class="sitem-btns">
+        <button class="tog-btn ${s.public?'pub':'priv'}" onclick="togglePub('${s.id}',this)">
+          ${s.public?'🌐 פומבי':'🔒 פרטי'}
+        </button>
+        <button class="del-btn" onclick="delScript('${s.id}')">🗑️ מחק</button>
+      </div>
+    </div>`).join('');
+}
+
+function addScript() {
+  const name = document.getElementById('sName').value.trim();
+  const desc = document.getElementById('sDesc').value.trim();
+  const content = document.getElementById('sContent').value.trim();
+  if (!name || !desc || !content) { toast('מלא שם, תיאור ותוכן', true); return; }
+  const s = {
+    id: 'u' + Date.now(),
+    name, description: desc, content,
+    category: document.getElementById('sCat').value,
+    keywords: document.getElementById('sKeys').value.split(',').map(k=>k.trim()).filter(Boolean),
+    public: document.getElementById('sPub').checked
+  };
+  const extra = JSON.parse(localStorage.getItem('itbot_extra') || '[]');
+  extra.push(s); localStorage.setItem('itbot_extra', JSON.stringify(extra));
+  scripts.push(s);
+  ['sName','sDesc','sContent','sKeys'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('sPub').checked = false;
+  toast('✅ סקריפט נוסף!');
+  renderScripts();
+}
+
+function togglePub(id, btn) {
+  const s = scripts.find(x => x.id === id); if (!s) return;
+  s.public = !s.public;
+  btn.className = 'tog-btn ' + (s.public ? 'pub' : 'priv');
+  btn.textContent = s.public ? '🌐 פומבי' : '🔒 פרטי';
+  // Update in localStorage if it's a local script
+  const extra = JSON.parse(localStorage.getItem('itbot_extra') || '[]');
+  const li = extra.findIndex(x => x.id === id);
+  if (li >= 0) { extra[li].public = s.public; localStorage.setItem('itbot_extra', JSON.stringify(extra)); }
+  toast(s.public ? 'הסקריפט פורסם ללקוחות' : 'הסקריפט הוסתר מלקוחות');
+}
+
+function delScript(id) {
+  if (!confirm('למחוק את הסקריפט?')) return;
+  scripts = scripts.filter(s => s.id !== id);
+  const extra = JSON.parse(localStorage.getItem('itbot_extra') || '[]');
+  localStorage.setItem('itbot_extra', JSON.stringify(extra.filter(s => s.id !== id)));
+  document.getElementById('si'+id)?.remove();
+  toast('✅ נמחק');
+}
+
+// ── HISTORY ──────────────────────────────────────
+function loadHist() {
+  const el = document.getElementById('hList');
+  if (!hist.length) { el.innerHTML = '<div style="text-align:center;color:#aaa;padding:30px">אין היסטוריה עדיין</div>'; return; }
+  el.innerHTML = hist.map(h => `
+    <div class="hitem">
+      <div class="hdate">📅 ${esc(h.date)}</div>
+      <div class="hprob">🔍 ${esc(h.problem)}</div>
+      <div style="color:#888;font-size:.78em;margin-top:3px">מקור: ${esc(h.source||'')}</div>
+    </div>`).join('');
+}
+
+// ── UTILS ─────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast on' + (err?' err':'');
+  setTimeout(() => t.classList.remove('on'), 3000);
+}
+
+// Load scripts on init
+loadScripts();
+</script>
+</body>
+</html>

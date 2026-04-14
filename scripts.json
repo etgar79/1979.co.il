@@ -1,0 +1,47 @@
+[
+  {
+    "id": "1",
+    "name": "תיקון תור הדפסה",
+    "category": "מדפסות",
+    "description": "מנקה תור הדפסה תקוע",
+    "keywords": ["מדפסת","הדפסה","תור","spooler","לא מדפיס","תקוע"],
+    "content": "Stop-Service Spooler\nRemove-Item \"C:\\Windows\\System32\\spool\\PRINTERS\\*\" -Force\nStart-Service Spooler\nWrite-Host \"תור ההדפסה נוקה!\" -ForegroundColor Green",
+    "public": true
+  },
+  {
+    "id": "2",
+    "name": "איפוס DNS ורשת",
+    "category": "רשת",
+    "description": "מאפס הגדרות DNS ומחדש IP",
+    "keywords": ["dns","אינטרנט","רשת","חיבור","לא עובד","ip","ping"],
+    "content": "ipconfig /flushdns\nipconfig /release\nipconfig /renew\nnetsh winsock reset\nWrite-Host \"הרשת אופסה!\" -ForegroundColor Green",
+    "public": true
+  },
+  {
+    "id": "3",
+    "name": "ניקוי קבצי Temp",
+    "category": "ביצועים",
+    "description": "מוחק קבצים זמניים ומפנה מקום",
+    "keywords": ["איטי","temp","זמני","מקום","דיסק","ביצועים","תקוע"],
+    "content": "Remove-Item \"$env:TEMP\\*\" -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item \"C:\\Windows\\Temp\\*\" -Recurse -Force -ErrorAction SilentlyContinue\nWrite-Host \"קבצי Temp נוקו!\" -ForegroundColor Green",
+    "public": true
+  },
+  {
+    "id": "4",
+    "name": "הסרת תוכנה בכוח",
+    "category": "התקנות",
+    "description": "מסיר תוכנה שלא נמחקת בדרך רגילה",
+    "keywords": ["הסרה","תוכנה","uninstall","מחיקה","תוכנית"],
+    "content": "$app = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like \"*שם_התוכנה*\" }\n$app.Uninstall()\nWrite-Host \"התוכנה הוסרה!\" -ForegroundColor Green",
+    "public": false
+  },
+  {
+    "id": "5",
+    "name": "בדיקת Windows Update",
+    "category": "Windows",
+    "description": "בודק ומתקין עדכוני Windows בכפייה",
+    "keywords": ["עדכון","update","windows","התקנה","עדכונים"],
+    "content": "Install-Module PSWindowsUpdate -Force\nGet-WindowsUpdate -Install -AcceptAll -AutoReboot\nWrite-Host \"עדכונים הותקנו!\" -ForegroundColor Green",
+    "public": false
+  }
+]
