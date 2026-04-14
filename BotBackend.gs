@@ -229,33 +229,29 @@ function handleBotRequest(data) {
   }
 }
 
-// ── doPost מעודכן (החלף את הישן ב-Code.gs) ───────
-function doPost(e) {
-  const headers = { 'Access-Control-Allow-Origin': '*' };
-  try {
-    const data = JSON.parse(e.postData.contents);
-    let result;
-
-    // בקשות בוט חדשות
-    if (data.action) {
-      result = handleBotRequest(data);
-    } else {
-      // תאימות לאחור - בקשות ישנות
-      const problem = data.problem || data.description || '';
-      if (!problem) {
-        result = { success: false, error: 'חסר תיאור בעיה' };
-      } else {
-        result = handleSupportRequest(problem);
-      }
-    }
-
-    return ContentService
-      .createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+// ===============================
+// ב-Code.gs הקיים, החלף את doPost בזה:
+// ===============================
+//
+// function doPost(e) {
+//   try {
+//     const data = JSON.parse(e.postData.contents);
+//     let result;
+//     if (data.action) {
+//       result = handleBotRequest(data);          // ← חדש - מנתב לבוט
+//     } else {
+//       const problem = data.problem || data.description || '';
+//       if (!problem) {
+//         result = { success: false, error: 'חסרה תיאור הבעיה' };
+//       } else {
+//         result = handleSupportRequest(problem); // ← ישן - נשמר
+//       }
+//     }
+//     return ContentService.createTextOutput(JSON.stringify(result))
+//       .setMimeType(ContentService.MimeType.JSON);
+//   } catch (error) {
+//     return ContentService.createTextOutput(JSON.stringify({
+//       success: false, error: error.toString()
+//     })).setMimeType(ContentService.MimeType.JSON);
+//   }
+// }
